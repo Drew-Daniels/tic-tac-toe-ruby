@@ -28,8 +28,16 @@ class Board
     ]
   end
 
-  def to_str
-    p self.board
+  def to_s
+    pretty_board = ""
+    self.board.each { |row| 
+      line = ""
+      row.each { |col|
+        line = line + "[#{col}]"
+      }
+      pretty_board = pretty_board + line + "\n"
+    }
+    pretty_board
   end
 
   def handle_move(marker, position)
@@ -41,7 +49,7 @@ class Board
   end
 
   def is_full?
-    board.all? { |row| row.all? { |col| ["X", "O"].include? col}}
+    self.board.all? { |row| row.all? { |col| ["X", "O"].include? col}}
   end
 
   private
@@ -51,7 +59,7 @@ class Board
   end
 
   def drop_marker(marker, row, col)
-    board[row][col] = marker
+    self.board[row][col] = marker
   end
 
   def marker_wins?(marker)
@@ -96,4 +104,5 @@ end
 
 # Board.drop_marker('X', 9)
 
-p Board
+b = Board.new
+puts b
