@@ -1,7 +1,23 @@
 class Board
 
-  def self.position_to_coordinates(position)
-    puts "TBD"
+  # TODO: Refactor to make more concise
+  def self.pos_to_coord(position)
+    row = nil
+    col = nil
+
+    if position.between?(1, 3)
+     row = 1
+     col = position
+    elsif position.between?(4, 6)
+      row = 2
+      col = unless position % 3 == 0 then position % 3 else 3 end
+    elsif position.between?(7, 9)
+      row = 3
+      col = unless position % 3 == 0 then position % 3 else 3 end
+    else
+      raise StandardError.new "Invalid Position"
+    end
+    { row: row, col: col }
   end
 
   def initialize
@@ -16,7 +32,15 @@ class Board
     p board
   end
 
-  def self.position_to_coordinates(position)
+  def handle_move(marker, position)
+    if self.is_valid?(position)
+      coordinates = Board.pos_to_coord(position)
+      self.drop_marker(marker, coordinates.row, coordinates.col)
+    else
+    end
+  end
+
+  def is_full?
     puts "TBD"
   end
 
@@ -26,15 +50,11 @@ class Board
     position.between?(0, 9)
   end
 
-  def drop_marker(marker)
+  def drop_marker(marker, row, col)
     puts "TBD"
   end
 
   def marker_wins?(marker)
-    puts "TBD"
-  end
-
-  def is_full?
     puts "TBD"
   end
 end
@@ -69,3 +89,9 @@ gc = GameController.new
 
 gc.prompt
 
+(1..9).each do |pos| 
+  puts pos
+  puts Board.pos_to_coord(pos)
+end
+
+puts Board.pos_to_coord(0)
