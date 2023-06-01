@@ -1,19 +1,19 @@
 class Board
-
+  attr_accessor :board
   # TODO: Refactor to make more concise
   def self.pos_to_coord(position)
     row = nil
     col = nil
 
     if position.between?(1, 3)
-     row = 1
-     col = position
+     row = 0
+     col = position - 1
     elsif position.between?(4, 6)
-      row = 2
-      col = unless position % 3 == 0 then position % 3 else 3 end
+      row = 1
+      col = (position  - 1) % 3
     elsif position.between?(7, 9)
-      row = 3
-      col = unless position % 3 == 0 then position % 3 else 3 end
+      row = 2
+      col = (position  - 1) % 3
     else
       raise StandardError.new "Invalid Position"
     end
@@ -22,14 +22,14 @@ class Board
 
   def initialize
     @board = [
-      [1], [2], [3],
-      [4], [5], [6],
-      [7], [8], [9],
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
     ]
   end
 
   def to_str
-    p board
+    p self.board
   end
 
   def handle_move(marker, position)
@@ -41,7 +41,7 @@ class Board
   end
 
   def is_full?
-    puts "TBD"
+    board.all? { |row| row.all? { |col| ["X", "O"].include? col}}
   end
 
   private
@@ -51,7 +51,7 @@ class Board
   end
 
   def drop_marker(marker, row, col)
-    puts "TBD"
+    board[row][col] = marker
   end
 
   def marker_wins?(marker)
@@ -94,4 +94,6 @@ gc.prompt
   puts Board.pos_to_coord(pos)
 end
 
-puts Board.pos_to_coord(0)
+# Board.drop_marker('X', 9)
+
+p Board
