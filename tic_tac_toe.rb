@@ -16,6 +16,10 @@ class Board
     p board
   end
 
+  def self.position_to_coordinates(position)
+    puts "TBD"
+  end
+
   private
 
   def valid_move?(position)
