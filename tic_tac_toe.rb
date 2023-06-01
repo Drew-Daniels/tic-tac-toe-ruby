@@ -65,6 +65,14 @@ class Board
     }
   end
 
+  def marker_wins_by_row?(marker)
+    (0..2).all? { |row| self.marker_has_row?(marker, row)}
+  end
+
+  def marker_wins_by_col?(marker)
+    (0..2).all? { |col| self.marker_has_col?(marker, col)}
+  end
+
   def marker_has_tl_diagonal?(marker)
     (0..2).each { |num|
       self.board[num][num] == marker
@@ -92,8 +100,17 @@ class Board
     self.board[row][col] = marker
   end
 
-  def marker_win?(marker)
-    puts "TBD"
+  def marker_has_won?(marker)
+    win_by_row = self.marker_wins_by_row(marker)
+    win_by_col= self.marker_wins_by_col(marker)
+    win_by_tl_diag = self.marker_has_tl_diagonal?(marker)
+    win_by_tr_diag = self.marker_has_tr_diagonal(marker)
+    [
+      win_by_row,
+      win_by_col,
+      win_by_tl_diag,
+      win_by_tr_diag,
+    ].any?
   end
 end
 
