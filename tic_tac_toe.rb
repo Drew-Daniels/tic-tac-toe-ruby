@@ -55,6 +55,29 @@ class Board
 
   private
 
+  def marker_has_row?(marker, row_num)
+    self.board[row_num].all? { |col| col == marker}
+  end
+
+  def marker_has_col?(marker, col_num)
+    self.board.all? { |row| 
+      row[col_num] == marker
+    }
+  end
+
+  def marker_has_tl_diagonal?(marker)
+    (0..2).each { |num|
+      self.board[num][num] == marker
+    }
+  end
+
+  def marker_has_tr_diagonal(marker)
+    (0..2).each { |num|
+      col = num == 0 ? 2 : (num + 2) % 2
+      self.board[num][col] == marker
+    }
+  end
+
   def valid_move?(position)
     position.between?(0, 9)
     coord = Board.pos_to_coord(position)
