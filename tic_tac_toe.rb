@@ -37,13 +37,13 @@ class Board
       }
       pretty_board = pretty_board + line + "\n"
     }
-    pretty_board
+    pretty_board + "\n"
   end
 
   def handle_move(marker, position)
-    if self.is_valid?(position)
+    if self.valid_move?(position)
       coordinates = Board.pos_to_coord(position)
-      self.drop_marker(marker, coordinates.row, coordinates.col)
+      self.drop_marker(marker, coordinates[:row], coordinates[:col])
     else
     end
   end
@@ -105,4 +105,8 @@ end
 # Board.drop_marker('X', 9)
 
 b = Board.new
+puts b
+
+b.handle_move("X", 9)
+
 puts b
