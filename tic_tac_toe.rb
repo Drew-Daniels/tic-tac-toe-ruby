@@ -45,6 +45,7 @@ class Board
       coordinates = Board.pos_to_coord(position)
       self.drop_marker(marker, coordinates[:row], coordinates[:col])
     else
+      raise StandardError.new("Invalid Move - please try again")
     end
   end
 
@@ -56,13 +57,19 @@ class Board
 
   def valid_move?(position)
     position.between?(0, 9)
+    coord = Board.pos_to_coord(position)
+    !self.marked?(coord[:row], coord[:col])
+  end
+
+  def marked?(row, col)
+    ["X","O"].include?(self.board[row][col])
   end
 
   def drop_marker(marker, row, col)
     self.board[row][col] = marker
   end
 
-  def marker_wins?(marker)
+  def marker_win?(marker)
     puts "TBD"
   end
 end
@@ -110,3 +117,5 @@ puts b
 b.handle_move("X", 9)
 
 puts b
+
+b.handle_move("O", 9)
