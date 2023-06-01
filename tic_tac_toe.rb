@@ -1,21 +1,22 @@
 class Board
   attr_accessor :board
+
   # TODO: Refactor to make more concise
   def self.pos_to_coord(position)
     row = nil
     col = nil
 
     if position.between?(1, 3)
-     row = 0
-     col = position - 1
+      row = 0
+      col = position - 1
     elsif position.between?(4, 6)
       row = 1
-      col = (position  - 1) % 3
+      col = (position - 1) % 3
     elsif position.between?(7, 9)
       row = 2
-      col = (position  - 1) % 3
+      col = (position - 1) % 3
     else
-      raise StandardError.new "Invalid Position"
+      raise StandardError, 'Invalid Position'
     end
     { row: row, col: col }
   end
@@ -24,92 +25,92 @@ class Board
     @board = [
       [1, 2, 3],
       [4, 5, 6],
-      [7, 8, 9],
+      [7, 8, 9]
     ]
   end
 
   def to_s
-    pretty_board = ""
-    self.board.each { |row| 
-      line = ""
-      row.each { |col|
-        line = line + "[#{col}]"
-      }
-      pretty_board = pretty_board + line + "\n"
-    }
-    pretty_board + "\n"
+    pretty_board = ''
+    board.each do |row|
+      line = ''
+      row.each do |col|
+        line += "[#{col}]"
+      end
+      pretty_board = "#{pretty_board}#{line}\n"
+    end
+    "#{pretty_board}\n"
   end
 
   def handle_move(marker, position)
-    if self.valid_move?(position)
-      coordinates = Board.pos_to_coord(position)
-      self.drop_marker(marker, coordinates[:row], coordinates[:col])
-    else
-      raise StandardError.new("Invalid Move - please try again")
-    end
+    raise StandardError 'Invalid Move - please try again' unless valid_move?(position)
+
+    coordinates = Board.pos_to_coord(position)
+    drop_marker(marker, coordinates[:row], coordinates[:col])
   end
 
-  def is_full?
-    self.board.all? { |row| row.all? { |col| ["X", "O"].include? col}}
+  def full?
+    board.all? { |row| row.all? { |col| %w[X O].include? col } }
   end
 
   private
 
   def marker_has_row?(marker, row_num)
-    self.board[row_num].all? { |col| col == marker}
+    board[row_num].all? { |col| col == marker }
   end
 
   def marker_has_col?(marker, col_num)
-    self.board.all? { |row| 
+    board.all? do |row|
       row[col_num] == marker
-    }
+    end
   end
 
   def marker_wins_by_row?(marker)
-    (0..2).all? { |row| self.marker_has_row?(marker, row)}
+    (0..2).all? { |row| marker_has_row?(marker, row) }
   end
 
   def marker_wins_by_col?(marker)
-    (0..2).all? { |col| self.marker_has_col?(marker, col)}
+    (0..2).all? { |col| marker_has_col?(marker, col) }
   end
 
   def marker_has_tl_diagonal?(marker)
-    (0..2).each { |num|
-      self.board[num][num] == marker
-    }
+    3.times do |num|
+      board[num][num]
+      marker
+    end
   end
 
   def marker_has_tr_diagonal(marker)
-    (0..2).each { |num|
+    3.times do |num|
       col = num == 0 ? 2 : (num + 2) % 2
-      self.board[num][col] == marker
-    }
+      board[num][col]
+      marker
+    end
   end
 
   def valid_move?(position)
     position.between?(0, 9)
     coord = Board.pos_to_coord(position)
-    !self.marked?(coord[:row], coord[:col])
+    !marked?(coord[:row], coord[:col])
   end
 
   def marked?(row, col)
-    ["X","O"].include?(self.board[row][col])
+    %w[X O].include?(board[row][col])
   end
 
   def drop_marker(marker, row, col)
-    self.board[row][col] = marker
+    board[row][col] = marker
   end
 
   def marker_has_won?(marker)
-    win_by_row = self.marker_wins_by_row(marker)
-    win_by_col= self.marker_wins_by_col(marker)
-    win_by_tl_diag = self.marker_has_tl_diagonal?(marker)
-    win_by_tr_diag = self.marker_has_tr_diagonal(marker)
+    win_by_row = marker_wins_by_row(marker)
+    win_by_col = marker_wins_by_col(marker)
+    win_by_tl_diag = marker_has_tl_diagonal?(marker)
+    win_by_tr_diag = marker_has_tr_diagonal(marker)
     [
       win_by_row,
       win_by_col,
       win_by_tl_diag,
-      win_by_tr_diag,
+      win_by_tr_diag
     ].any?
   end
 end
@@ -126,17 +127,17 @@ end
 class GameController
   def prompt
     puts "Would you like to start a game of Tic-Tac-Toe? Enter 'y' if so, any other key otherwise."
-    res = gets.chomp 
-    if (res.downcase == "y")
-      p1 = Player.new("Player 1", "X")
-      p2 = Player.new("Player 2", "O")
+    res = gets.chomp
+    return unless res.downcase == 'y'
 
-      board = Board.new
+    p1 = Player.new('Player 1', 'X')
+    p2 = Player.new('Player 2', 'O')
 
-      p p1
-      p p2
-      p board
-    end
+    board = Board.new
+
+    p p1
+    p p2
+    p board
   end
 end
 
@@ -144,7 +145,7 @@ gc = GameController.new
 
 gc.prompt
 
-(1..9).each do |pos| 
+(1..9).each do |pos|
   puts pos
   puts Board.pos_to_coord(pos)
 end
@@ -154,8 +155,8 @@ end
 b = Board.new
 puts b
 
-b.handle_move("X", 9)
+b.handle_move('X', 9)
 
 puts b
 
-b.handle_move("O", 9)
+b.handle_move('O', 9)
