@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+require 'colorize'
+
 class Board
   attr_accessor :board
 
@@ -64,10 +68,6 @@ class Board
     win_by_col = marker_wins_by_col?(marker)
     win_by_tl_diag = marker_has_tl_diagonal?(marker)
     win_by_tr_diag = marker_has_tr_diagonal?(marker)
-    puts win_by_row
-    puts win_by_col
-    puts win_by_tl_diag
-    puts win_by_tr_diag
     [
       win_by_row,
       win_by_col,
@@ -89,25 +89,21 @@ class Board
   end
 
   def marker_wins_by_row?(marker)
-    (0..2).all? { |row| marker_has_row?(marker, row) }
+    (0..2).any? { |row| marker_has_row?(marker, row) }
   end
 
   def marker_wins_by_col?(marker)
-    (0..2).all? { |col| marker_has_col?(marker, col) }
+    (0..2).any? { |col| marker_has_col?(marker, col) }
   end
 
   def marker_has_tl_diagonal?(marker)
-    3.times do |num|
-      board[num][num]
-      marker
-    end
+    (0..2).all? { |num| board[num][num] == marker }
   end
 
   def marker_has_tr_diagonal?(marker)
-    3.times do |num|
+    (0..2).all? do |num|
       col = num.zero? ? 2 : (num + 2) % 2
-      board[num][col]
-      marker
+      board[num][col] == marker
     end
   end
 
@@ -121,11 +117,11 @@ class Board
 end
 
 class Player
-  attr_reader :name, :marker
+  attr_reader :name, :marker, :color
 
-  def initialize(name, marker)
+  def initialize(name, marker, color)
     @name = name
-    @marker = marker
+    @marker = marker.public_send(:"#{color}")
   end
 end
 
@@ -133,8 +129,8 @@ class Game
   attr_accessor :p1, :p2, :board, :current_player, :done, :winner, :turn_complete
 
   def initialize
-    @p1 = Player.new('Player 1', 'X')
-    @p2 = Player.new('Player 2', 'O')
+    @p1 = Player.new('Player 1', 'X', 'red')
+    @p2 = Player.new('Player 2', 'O', 'blue')
     @board = Board.new
     @current_player = p1
     @done = false
@@ -145,12 +141,24 @@ class Game
   end
 
   def announce_start
-    puts 'Starting a new game of Tic-Tac-Toe!'
+    puts "\nStarting a new game of Tic-Tac-Toe!\n"
+  end
+
+  def announce_rules
     puts 'Type a number from 1-9 and {ENTER} to make your move'
+    puts 'Press {q + ENTER} at anytime to end the game'
   end
 
   def announce_turn(player_name, player_marker)
-    puts "#{player_name} (#{player_marker}) it is your turn"
+    puts "\n#{player_name} (#{player_marker}) it is your turn \n"
+  end
+
+  def announce_winner(player_name, player_marker)
+    puts "\n#{player_name} (#{player_marker}) is the winner! \n"
+  end
+
+  def prompt_again
+    puts 'Would you like to play again?'
   end
 
   def set_the_stage
@@ -160,7 +168,12 @@ class Game
 
   def ask_move
     set_the_stage
-    gets.chomp.to_i
+    i = gets.chomp
+    user_quit_event?(i) ? exit : i.to_i
+  end
+
+  def user_quit_event?(input)
+    input == 'q'
   end
 
   def turn_cycle
@@ -180,7 +193,8 @@ class Game
 
   def after_turn
     if board.marker_has_won?(current_player.marker)
-      puts 'TBD'
+      announce_winner(current_player.name, current_player.marker)
+      puts board
     else
       self.current_player = current_player == p1 ? p2 : p1
       self.turn_complete = false
