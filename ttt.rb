@@ -18,7 +18,7 @@ class Board
     else
       raise StandardError, 'Invalid Position'
     end
-    { row: row, col: col }
+    { row:, col: }
   end
 
   def initialize
